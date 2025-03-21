@@ -1,0 +1,22 @@
+FROM docker.io/library/alpine:3.21
+
+LABEL com.wangzhengwei.author="qingxin wang" \
+      com.wangzhengwei.buildtime="20250320"
+
+ENV JAVA_VERSION jdk8u442-b06
+ENV TEMURIN_DOWNLOAD_URL https://github.com/adoptium/temurin8-binaries
+ENV JAVA_HOME /usr/local/openjdk8
+ENV JRE_HOME $JAVA_HOME/jre
+ENV CLASSPATH .:$JAVA_HOME/lib:$JAVA_HOME/jre/lib:$CLASSPATH
+ENV PATH $JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH
+ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
+
+RUN wget -O /tmp/openjdk.tar.gz ${TEMURIN_DOWNLOAD_URL}/releases/download/${JAVA_VERSION}/OpenJDK8U-jre_x64_alpine-linux_hotspot_8u442b06.tar.gz; \
+    mkdir -p "$JAVA_HOME"; \
+    tar --extract --file /tmp/openjdk.tar.gz --directory "$JAVA_HOME" --strip-components 1 --no-same-owner; \
+    rm -f /tmp/openjdk.tar.gz ${JAVA_HOME}/src.zip;
+
+RUN echo Verifying install ... \
+    && echo javac -version && javac -version \
+    && echo java -version && java -version \
+    && echo Complete.
